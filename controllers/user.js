@@ -1,0 +1,125 @@
+const { response } = require("express");
+const bcrypt = require("bcryptjs");
+const User = require("../models/user.model");
+const { generateJWT } = require("../helper/jwt");
+
+const getUsers = async (req, res = response) => {
+  const users = await User.findAll();
+
+  return res.json({
+    msg: "ok",
+    users,
+  });
+};
+
+const createUser = async (req, res = response) => {
+  const { name, surname, mail, password } = req.body;
+
+  try {
+    const isEmailExist = await User.findOne({ where: { mail } });
+
+    if (isEmailExist) {
+      return res.status(400).json({
+        ok: false,
+        msg: "El correo ya esta registrado",
+      });
+    }
+
+    //Encrypt password
+    const salt = bcrypt.genSaltSync();
+    const passwordHashed = bcrypt.hashSync(password, salt);
+
+    const user = await User.create({
+      name: name,
+      surname: surname,
+      mail: mail,
+      password: passwordHashed,
+    });
+
+    // Save new user
+    await user.save();
+
+
+    //Generate JWT
+    const token = await generateJWT(user.id);
+
+    return res.status(200).json({
+      msg: "Usuario creado con éxito",
+      user,
+      token
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error inesperado",
+    });
+  }
+};
+
+const updateUser = async (req, res = response) => {
+  const uid = req.params.id;
+
+  try {
+    const isUserExist = await User.findOne({ where: { id: uid } });
+    if (!isUserExist) {
+      return res.status(404).json({
+        msg: "No existe usuario con ese id",
+      });
+    }
+
+    const { name, surname, mail, ...data } = req.body;
+
+    if (isUserExist !== mail) {
+      const isEmailExist = await User.findOne({ where: { mail } });
+      if (isEmailExist) {
+        return res.status(400).json({
+          msg: "El correo ya existe",
+        });
+      }
+    }
+
+    data.mail = mail;
+    data.name = name;
+    data.surname = surname;
+
+    const userUpdated = await User.update(data, {
+      where: { id: isUserExist.id },
+    });
+
+    console.log(userUpdated);
+
+    return res.json({
+      msg: "Usuario fue actualizado correctamente",
+      userUpdated,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: "Error inesperado",
+    });
+  }
+};
+
+const deleteUser = async (req, res = response) => {
+  const uid = req.params.id;
+
+  const user = await User.findOne({ where: { id: uid } });
+  if (!user) {
+    return res.status(404).json({
+      msg: "El usuario no existe",
+    });
+  }
+
+  await User.destroy({ where: { id: uid } });
+
+  return res.status(400).json({
+    msg: "El usuario fue eliminado",
+  });
+};
+
+module.exports = {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+};

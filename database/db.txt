@@ -1,0 +1,23 @@
+-- Creacion de tabla
+--  CREATE Table users (
+--      id INT IDENTITY(1,1) PRIMARY KEY,
+--      name VARCHAR(100) NOT NULL,
+--      surname VARCHAR(100) NOT NULL,
+--      mail VARCHAR(100) NOT NULL UNIQUE,
+--         password VARCHAR(100) NOT NULL UNIQUE,
+-- );
+
+-- DROP TABLE users
+
+-- Eliminar tabla
+--DELETE FROM users
+
+-- Cambiar nombre de columna
+-- EXEC sp_rename 'users.email', 'mail', 'COLUMN';
+
+-- Agregar columna
+-- ALTER TABLE users
+-- ADD password VARCHAR(100);
+
+
+-- SELECT * FROM users;

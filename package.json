@@ -1,17 +1,28 @@
 {
-  "name": "03-bases-node",
+  "name": "futbol-api",
   "version": "0.0.1",
   "description": "Aplicacion que solo muestra y crea un archivo de una tabla de multiplicar",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "base3": "node app --base=3"
+    "start:dev": "nodemon index.js",
+    "start:db": "nodemon database/mysql.js"
   },
   "author": "Facundo Bargut",
   "license": "MIT",
   "dependencies": {
-    "colors": "^1.4.0",
-    "yargs": "^17.3.1"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mssql": "^11.0.1",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3",
+    "uuid": "^10.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }
